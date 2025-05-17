@@ -35,16 +35,13 @@ document.getElementById("studentForm").addEventListener("submit",function(e){
                 <td>${student.grade}</td>`;
             tableBody.appendChild(row);
         }
-        function calculateAverage() {
+        function calculateAverage(){
             if (students.length === 0) {
-                averageDiv.textContent = "Promedio General del curso: N/A";
+                averageDiv.textContent = "Promedio General del Curso: N/A";
                 return;
             }
-        
-            let sum = 0;
-            for (const student of students) {
-                sum += student.grade;
-            }
-            const average = sum / students.length;
-            averageDiv.textContent = `Promedio General del curso: ${average.toFixed(2)}`;
+
+            const total=students.reduce((sum,student)=>sum+student.grade,0);
+            const prom=total/students.length;
+            averageDiv.textContent="Promedio General del Curso: "+prom.toFixed(2);
         }
