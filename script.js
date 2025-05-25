@@ -1,9 +1,9 @@
 const students = [];
 const tableBody = document.querySelector("#studentsTable tbody");
 const averageDiv = document.getElementById("average");
-let editingStudent = null; 
+let editingId = null;
 
-document.getElementById("studentForm").addEventListener("submit", function(e){
+document.getElementById("studentForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     const name = document.getElementById("name").value.trim();
@@ -16,23 +16,27 @@ document.getElementById("studentForm").addEventListener("submit", function(e){
         return;
     }
 
-    const student = { name, lastName, grade, fecha };
+    if (editingId !== null) {
+        const index = students.findIndex(s => s.id === editingId);
+        if (index !== -1) {
+            students[index] = { id: editingId, name, lastName, fecha, grade };
 
-    if (editingStudent) {
-        const index = students.indexOf(editingStudent);
-        students[index] = student;  
-        
- 
-        const row = tableBody.querySelector(`tr[data-id="${editingStudent.id}"]`);
-        row.querySelector(".name-column").textContent = student.name;
-        row.querySelector(".lastName-column").textContent = student.lastName;
-        row.querySelector(".fecha-column").textContent = student.fecha;
-        row.querySelector(".grade-column").textContent = student.grade;
-
-        editingStudent = null;
+            // Actualiza la fila directamente
+            const row = tableBody.querySelector(`tr[data-id="${editingId}"]`);
+            row.querySelector(".name-column").textContent = name;
+            row.querySelector(".lastName-column").textContent = lastName;
+            row.querySelector(".fecha-column").textContent = fecha;
+            row.querySelector(".grade-column").textContent = grade;
+        }
+        editingId = null;
     } else {
-
-        student.id = Date.now(); 
+        const student = {
+            id: Date.now(),
+            name,
+            lastName,
+            fecha,
+            grade
+        };
         students.push(student);
         addStudentToTable(student);
     }
@@ -43,7 +47,7 @@ document.getElementById("studentForm").addEventListener("submit", function(e){
 
 function addStudentToTable(student) {
     const row = document.createElement("tr");
-    row.setAttribute("data-id", student.id); 
+    row.setAttribute("data-id", student.id);
     row.innerHTML = `
         <td class="name-column">${student.name}</td>
         <td class="lastName-column">${student.lastName}</td>
@@ -53,46 +57,49 @@ function addStudentToTable(student) {
         <td><button class="delete-btn">Eliminar</button></td>
     `;
 
-    row.querySelector(".edit-btn").addEventListener("click", function(){
-        editarEstudiante(student, row);
-    });
-    row.querySelector(".delete-btn").addEventListener("click", function(){
-        deleteEstudiante(student, row);
+row.querySelector(".edit-btn").addEventListener("click", function () {
+    const updatedStudent = students.find(s => s.id === student.id);
+    editarEstudiante(updatedStudent);
+});
+
+
+    row.querySelector(".delete-btn").addEventListener("click", function () {
+        deleteEstudiante(student.id, row);
     });
 
     tableBody.appendChild(row);
 }
 
-function deleteEstudiante(student, row) {
+function editarEstudiante(student) {
+    editingId = student.id;
 
-    const index = students.findIndex(s => s.id === student.id);
-    if (index !== -1) {
-        students.splice(index, 1); 
-        row.remove(); 
-        calculateAverage(); 
-    }
+    document.getElementById("name").value = student.name;
+    document.getElementById("lastName").value = student.lastName;
+    document.getElementById("fecha").value = student.fecha;
+    document.getElementById("grade").value = student.grade;
 }
 
+function deleteEstudiante(studentId, row) {
+    const index = students.findIndex(s => s.id === studentId);
+    if (index !== -1) {
+        students.splice(index, 1);
+        row.remove();
+        calculateAverage();
+    }
+
+    if (editingId === studentId) {
+        editingId = null;
+        document.getElementById("studentForm").reset();
+    }
+}
 
 function calculateAverage() {
     if (students.length === 0) {
         averageDiv.textContent = "Promedio General del Curso: N/A";
         return;
     }
-    
 
-    const total = students.reduce((sum, student) => sum + student.grade, 0);
-    const prom = total / students.length;
-    averageDiv.textContent = "Promedio General del Curso: " + prom.toFixed(2);
-}
-
-function editarEstudiante(student, row) {
-
-    editingStudent = student;
-
-
-    document.getElementById("name").value = student.name;
-    document.getElementById("lastName").value = student.lastName;
-    document.getElementById("fecha").value = student.fecha;
-    document.getElementById("grade").value = student.grade;
+    const total = students.reduce((sum, s) => sum + s.grade, 0);
+    const avg = total / students.length;
+    averageDiv.textContent = "Promedio General del Curso: " + avg.toFixed(2);
 }
