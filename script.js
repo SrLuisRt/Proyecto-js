@@ -21,7 +21,7 @@ document.getElementById("studentForm").addEventListener("submit", function(e) {
         if (index !== -1) {
             students[index] = { id: editingId, name, lastName, fecha, grade };
 
-            // Actualiza la fila directamente
+           
             const row = tableBody.querySelector(`tr[data-id="${editingId}"]`);
             row.querySelector(".name-column").textContent = name;
             row.querySelector(".lastName-column").textContent = lastName;
