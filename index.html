@@ -10,7 +10,12 @@
 <body>
     <h2>Seguimiento de Calificaciones de Estudiantes</h2>
 
-    <div class="promedio" id="average">Promedio General del curso : N/A</div>
+    <div class="promedio" id="average">Promedio de Calificaciones: N/A</div>
+    <div id="statistics">
+        <p id="totalStudents">Total de estudiantes: 0</p>
+        <p id="passedStudents">Cantidad de aprobados: 0</p>
+        <p id="failedStudents">Cantidad de reprobados: 0</p>
+      </div>
 
     <form id="studentForm" class="formulario">
     <div>
@@ -33,7 +38,7 @@
         <input type="number" id="grade" step="0.1" min="1" max="7" required
         oninvalid="this.setCustomValidity('Por favor,complete el campo Calificacion')" oninput="this.setCustomValidity('')">
     </div>
-    <button type="submit">Guardar Alumno</button>
+    <button type="submit">Agregar Estudiante</button>
 </form>
 <table id="studentsTable" border="1" cellpadding="8" cellspacing="0">
     <thead>
@@ -54,8 +59,3 @@
     
 </body>
 </html>
-
-
-
-
-

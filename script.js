@@ -11,7 +11,7 @@ document.getElementById("studentForm").addEventListener("submit", function(e) {
     const fecha = document.getElementById("fecha").value.trim();
     const grade = parseFloat(document.getElementById("grade").value);
 
-    if (!name || !lastName || !fecha || isNaN(grade) || grade < 1 || grade > 7) {
+    if (!name || !lastName || !fecha || isNaN(grade) || grade < 1 || grade > 7 || passedStudents >=4.0 || failedStudents <=4.0) {
         alert("Error al ingresar Datos");
         return;
     }
@@ -92,14 +92,25 @@ function deleteEstudiante(studentId, row) {
         document.getElementById("studentForm").reset();
     }
 }
+function updateStatistics() {
+    const totalStudents = students.length;
+    const passedStudents = students.filter(s => s.grade >= 4.0).length;
+    const failedStudents = totalStudents - passedStudents;
+
+    document.getElementById("totalStudents").textContent = `Total de estudiantes: ${totalStudents}`;
+    document.getElementById("passedStudents").textContent = `Cantidad de aprobados: ${passedStudents}`;
+    document.getElementById("failedStudents").textContent = `Cantidad de reprobados: ${failedStudents}`;
+}
 
 function calculateAverage() {
     if (students.length === 0) {
         averageDiv.textContent = "Promedio General del Curso: N/A";
-        return;
+        updateStatistics();  
     }
 
     const total = students.reduce((sum, s) => sum + s.grade, 0);
     const avg = total / students.length;
     averageDiv.textContent = "Promedio General del Curso: " + avg.toFixed(2);
+
+    updateStatistics();
 }
